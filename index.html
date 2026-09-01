@@ -205,11 +205,13 @@ body.rfds-overlay-open { overflow: hidden; }
 /* State Landmass Styling */
 #rfds-app .state-path {
   fill: var(--rfds-navy);
-  stroke: rgba(249, 248, 245, 0.35);
+  stroke: rgba(249, 248, 245, 0.4);
   stroke-width: 1;
   pointer-events: none;
   cursor: default;
-  transition: fill 0.3s ease, stroke 0.3s ease, filter 0.3s ease, transform 0.3s ease;
+  transition: fill 0.45s cubic-bezier(0.16, 1, 0.3, 1), stroke 0.45s cubic-bezier(0.16, 1, 0.3, 1), filter 0.45s cubic-bezier(0.16, 1, 0.3, 1), transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+  transform-origin: center center;
+  transform-box: fill-box;
 }
 
 /* Interactive in final stage */
@@ -219,17 +221,19 @@ body.rfds-overlay-open { overflow: hidden; }
 }
 
 #rfds-app .map-interactive .state-path.state-hover {
-  fill: #0B2559;
-  stroke: var(--rfds-red);
-  stroke-width: 2.5;
-  filter: drop-shadow(0 4px 20px rgba(240, 91, 34, 0.38));
+  fill: #0F326D;
+  stroke: #F46C3E;
+  stroke-width: 2.2;
+  filter: drop-shadow(0 6px 20px rgba(240, 91, 34, 0.28));
+  transform: scale(1.012);
 }
 
 #rfds-app .map-interactive .state-path.state-selected {
-  fill: #0D2D68;
+  fill: #143F88;
   stroke: var(--rfds-red);
-  stroke-width: 2.8;
-  filter: drop-shadow(0 6px 26px rgba(240, 91, 34, 0.45));
+  stroke-width: 2.6;
+  filter: drop-shadow(0 8px 28px rgba(240, 91, 34, 0.42));
+  transform: scale(1.018);
 }
 
 /* Flight Arterial Corridors */
@@ -439,9 +443,9 @@ body.rfds-overlay-open { overflow: hidden; }
   width: 90%;
   opacity: 0;
   transform: translateY(40px) scale(0.95);
-  filter: blur(12px);
+  filter: none !important;
   pointer-events: none;
-  transition: opacity 0.6s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1), filter 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+  transition: opacity 0.6s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
   text-align: center;
   padding: 0 16px;
 }
@@ -449,14 +453,14 @@ body.rfds-overlay-open { overflow: hidden; }
 #rfds-app .narrative-card.active {
   opacity: 1;
   transform: translateY(0) scale(1);
-  filter: blur(0);
+  filter: none !important;
   pointer-events: auto;
 }
 
 #rfds-app .narrative-card.exit {
   opacity: 0;
   transform: translateY(-40px) scale(1.02);
-  filter: blur(12px);
+  filter: none !important;
 }
 
 #rfds-app .narrative-tag {
@@ -560,24 +564,30 @@ body.rfds-overlay-open { overflow: hidden; }
 
 /* State Hover Cursor Tooltip */
 #rfds-app .state-tooltip {
-  position: absolute;
-  background: var(--rfds-navy);
-  color: #fff;
-  border-radius: 6px;
-  padding: 6px 12px;
-  font-size: 12px;
-  font-weight: 600;
+  position: fixed;
+  background: rgba(0, 24, 70, 0.94);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 999px;
+  padding: 8px 16px;
+  font-family: "museo-sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
   pointer-events: none;
   opacity: 0;
-  transform: translate(-50%, -120%);
-  transition: opacity 0.15s ease;
-  z-index: 80;
-  box-shadow: 0 8px 24px rgba(0, 32, 91, 0.25);
+  transform: translate(-50%, -135%) scale(0.95);
+  transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1), transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 90;
+  box-shadow: 0 12px 32px rgba(0, 24, 70, 0.3), 0 2px 6px rgba(0, 0, 0, 0.12);
   white-space: nowrap;
 }
 
 #rfds-app .state-tooltip.visible {
   opacity: 1;
+  transform: translate(-50%, -135%) scale(1);
 }
 
 /* Stage Scroll Spine Progress Indicator */
@@ -683,8 +693,8 @@ body.rfds-overlay-open { overflow: hidden; }
 
 /* Map Offset Transition when Modal is Open */
 #rfds-app.drawer-open .map-stage-wrapper {
-  transform: scale(0.96);
-  filter: blur(6px);
+  transform: scale(0.975);
+  opacity: 0.85;
 }
 
 
@@ -768,13 +778,13 @@ body.rfds-overlay-open { overflow: hidden; }
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(0, 32, 91, 0.55);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  background: rgba(0, 24, 70, 0.45);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   z-index: 140;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.35s ease;
+  transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -793,8 +803,8 @@ body.rfds-overlay-open { overflow: hidden; }
   max-height: 90vh;
   perspective: 1500px;
   opacity: 0;
-  transform: translateY(30px) scale(0.95);
-  transition: opacity 0.4s ease, transform 0.4s ease;
+  transform: translateY(20px) scale(0.97);
+  transition: opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1), transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 #rfds-app .modal-overlay.open .flip-card {
@@ -806,7 +816,7 @@ body.rfds-overlay-open { overflow: hidden; }
   position: relative;
   width: 100%;
   height: 100%;
-  transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+  transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
   transform-style: preserve-3d;
 }
 
@@ -821,9 +831,10 @@ body.rfds-overlay-open { overflow: hidden; }
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
   background: #ffffff;
-  border-radius: 12px;
+  border-radius: 16px;
+  border: 1px solid rgba(0, 32, 91, 0.08);
   padding: 40px;
-  box-shadow: 0 30px 60px rgba(0, 32, 91, 0.15);
+  box-shadow: 0 32px 72px rgba(0, 24, 70, 0.18), 0 4px 16px rgba(0, 24, 70, 0.04);
   overflow-y: auto;
 }
 
@@ -971,18 +982,24 @@ body.rfds-overlay-open { overflow: hidden; }
   color: #ffffff;
   font-size: 14px;
   font-weight: 700;
-  padding: 14px 24px;
-  border-radius: 10px;
+  letter-spacing: 0.02em;
+  padding: 15px 26px;
+  border-radius: 12px;
   border: none;
   cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 4px 14px rgba(0, 32, 91, 0.15);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 18px rgba(0, 32, 91, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.15);
 }
 
 #rfds-app .drawer-primary-btn:hover {
-  background: var(--rfds-navy-hover);
-  transform: translateY(-1px);
-  box-shadow: 0 6px 20px rgba(0, 32, 91, 0.22);
+  background: #001A4B;
+  transform: translateY(-1.5px);
+  box-shadow: 0 8px 26px rgba(0, 32, 91, 0.26), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+#rfds-app .drawer-primary-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 10px rgba(0, 32, 91, 0.18);
 }
 
 #rfds-app .drawer-back-link {
@@ -1012,13 +1029,14 @@ body.rfds-overlay-open { overflow: hidden; }
 #rfds-app .form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 12px;
+  gap: 14px;
 }
 
 #rfds-app .form-label {
   display: block;
-  font-size: 12px;
+  font-size: 11.5px;
   font-weight: 700;
+  letter-spacing: 0.01em;
   color: var(--rfds-navy);
   margin-bottom: 6px;
 }
@@ -1029,20 +1047,26 @@ body.rfds-overlay-open { overflow: hidden; }
 
 #rfds-app .form-input, #rfds-app .form-select, #rfds-app .form-textarea {
   width: 100%;
-  font-family: inherit;
-  font-size: 13px;
-  padding: 10px 12px;
-  border: 1px solid #cbd5e1;
-  border-radius: 8px;
+  font-family: "museo-sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 13.5px;
+  padding: 12px 14px;
+  border: 1px solid rgba(0, 32, 91, 0.14);
+  border-radius: 10px;
   color: var(--ink);
+  background: #fbfcfe;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+#rfds-app .form-input:hover, #rfds-app .form-select:hover, #rfds-app .form-textarea:hover {
+  border-color: rgba(0, 32, 91, 0.28);
   background: #ffffff;
-  transition: all 0.2s ease;
 }
 
 #rfds-app .form-input:focus, #rfds-app .form-select:focus, #rfds-app .form-textarea:focus {
   outline: none;
+  background: #ffffff;
   border-color: var(--rfds-navy);
-  box-shadow: 0 0 0 3px rgba(0, 32, 91, 0.1);
+  box-shadow: 0 0 0 3.5px rgba(0, 32, 91, 0.09);
 }
 
 #rfds-app .form-error {
@@ -1300,21 +1324,20 @@ body.rfds-overlay-open { overflow: hidden; }
   padding: 0;
   opacity: 0;
   transform: translateY(48px);
-  filter: blur(8px);
+  filter: none !important;
   transition:
     opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
-    transform 0.9s cubic-bezier(0.16, 1, 0.3, 1),
-    filter 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+    transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
 }
 #rfds-app .narrative-card.active {
   opacity: 1;
   transform: translateY(0);
-  filter: blur(0);
+  filter: none !important;
 }
 #rfds-app .narrative-card.exit {
   opacity: 0;
   transform: translateY(-42px);
-  filter: blur(8px);
+  filter: none !important;
 }
 #rfds-app .beat-copy {
   max-width: 860px;
@@ -2897,8 +2920,8 @@ body.rfds-overlay-open { overflow: hidden; }
   box-shadow: 0 0 0 4px rgba(240, 91, 34, 0.08);
 }
 
-/* Give the journey more physical scroll distance so every beat breathes. */
-#rfds-app .scroll-track { height: 1120vh; }
+/* Tightened, responsive virtual scroll distance to keep velocity crisp and engaging. */
+#rfds-app .scroll-track { height: 680vh; }
 
 /* Closing is now its own centred editorial beat rather than living inside Beat 3. */
 #rfds-app .closing-card {
@@ -2912,12 +2935,11 @@ body.rfds-overlay-open { overflow: hidden; }
   margin-top: 0;
 }
 
-/* Slightly slower, softer arrivals/dissolves. */
+/* Kinetic hardware transitions */
 #rfds-app .narrative-card {
   transition:
     opacity .82s cubic-bezier(.22,.61,.36,1),
-    transform .92s cubic-bezier(.22,.61,.36,1),
-    filter .78s cubic-bezier(.22,.61,.36,1);
+    transform .92s cubic-bezier(.22,.61,.36,1);
 }
 #rfds-app .story-stat-card {
   transition:
@@ -2933,7 +2955,7 @@ body.rfds-overlay-open { overflow: hidden; }
 }
 
 @media (max-width: 900px) {
-  #rfds-app .scroll-track { height: 1220vh; }
+  #rfds-app .scroll-track { height: 700vh; }
   #rfds-app .hero-eyebrow {
     padding: 7px 11px 6px;
     margin-bottom: 13px;
@@ -2942,10 +2964,10 @@ body.rfds-overlay-open { overflow: hidden; }
   }
 }
 @media (max-width: 560px) and (orientation: portrait) {
-  #rfds-app .scroll-track { height: 1280vh; }
+  #rfds-app .scroll-track { height: 720vh; }
 }
 @media (max-width: 900px) and (max-height: 520px) and (orientation: landscape) {
-  #rfds-app .scroll-track { height: 1080vh; }
+  #rfds-app .scroll-track { height: 600vh; }
 }
 
 
@@ -2956,8 +2978,7 @@ body.rfds-overlay-open { overflow: hidden; }
 #rfds-app .map-stage-wrapper,
 #rfds-app .story-stat-card,
 #rfds-app .beat-final-first,
-#rfds-app .beat-final-second,
-#rfds-app .spine-pip {
+#rfds-app .beat-final-second {
   transition: none !important;
 }
 
@@ -2968,6 +2989,81 @@ body.rfds-overlay-open { overflow: hidden; }
 #rfds-app .final-header-banner,
 #rfds-app .section-structure-note {
   transition: opacity 0.4s ease, transform 0.4s ease !important;
+}
+
+/* Interactive Spine Pips */
+#rfds-app .stage-spine {
+  position: fixed;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  z-index: 50;
+  pointer-events: auto;
+  padding: 8px 6px;
+  background: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow: 0 4px 16px rgba(0, 32, 91, 0.05);
+}
+
+#rfds-app .spine-pip {
+  width: 4px;
+  height: 14px;
+  border-radius: 999px;
+  background: rgba(0, 32, 91, 0.18);
+  cursor: pointer;
+  transition: height 0.25s cubic-bezier(0.16, 1, 0.3, 1), background 0.2s ease, transform 0.2s ease !important;
+}
+
+#rfds-app .spine-pip:hover {
+  background: var(--rfds-navy);
+  transform: scaleX(1.4);
+}
+
+#rfds-app .spine-pip.active {
+  height: 32px;
+  background: var(--rfds-red) !important;
+}
+
+/* Fast Navigation Button */
+#rfds-app .skip-to-map-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid rgba(0, 43, 92, 0.12);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  padding: 6px 13px;
+  border-radius: 999px;
+  font-family: "museo-sans", sans-serif;
+  font-size: 9.5px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--rfds-navy);
+  cursor: pointer;
+  pointer-events: auto;
+  box-shadow: 0 2px 10px rgba(0, 43, 92, 0.05);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+#rfds-app .skip-to-map-btn:hover {
+  background: var(--rfds-navy);
+  color: #fff;
+  border-color: var(--rfds-navy);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(0, 43, 92, 0.12);
+}
+
+#rfds-app .scroll-prompt {
+  cursor: pointer;
+  pointer-events: auto;
 }
 
 
@@ -3022,16 +3118,20 @@ body.rfds-overlay-open { overflow: hidden; }
     <div class="radar-dot"></div>
     <span>LIVE FLIGHT MAP</span>
   </div>
+  <button class="skip-to-map-btn" id="skipToMapBtn" type="button" aria-label="Explore interactive map and careers">
+    <span>ROLES &amp; MAP</span>
+    <svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3v10M3 9l5 5 5-5"/></svg>
+  </button>
 </nav>
 
 <!-- Minimal Right-side Step Indicator -->
-<div class="stage-spine">
-  <div class="spine-pip active" id="spine0"></div>
-  <div class="spine-pip" id="spine1"></div>
-  <div class="spine-pip" id="spine2"></div>
-  <div class="spine-pip" id="spine3"></div>
-  <div class="spine-pip" id="spine4"></div>
-  <div class="spine-pip" id="spine5"></div>
+<div class="stage-spine" role="navigation" aria-label="Story chapters">
+  <div class="spine-pip active" id="spine0" role="button" tabindex="0" title="Home: A career that goes further" aria-label="Chapter 1: Intro"></div>
+  <div class="spine-pip" id="spine1" role="button" tabindex="0" title="Workforce: 1,800+ healthcare leaders" aria-label="Chapter 2: People"></div>
+  <div class="spine-pip" id="spine2" role="button" tabindex="0" title="Reach: 30+ bases & 90+ aircraft" aria-label="Chapter 3: Reach"></div>
+  <div class="spine-pip" id="spine3" role="button" tabindex="0" title="Impact: Care every 2 minutes" aria-label="Chapter 4: Impact"></div>
+  <div class="spine-pip" id="spine4" role="button" tabindex="0" title="Purpose: Make a difference" aria-label="Chapter 5: Purpose"></div>
+  <div class="spine-pip" id="spine5" role="button" tabindex="0" title="Interactive Map: Explore sections & roles" aria-label="Chapter 6: Explore roles"></div>
 </div>
 
 <!-- Scrollytelling Track -->
@@ -3348,7 +3448,7 @@ body.rfds-overlay-open { overflow: hidden; }
       <!-- Beat 1 -->
       <section class="narrative-card" id="narrative1" aria-labelledby="beat1Title">
         <div class="beat-copy">
-          <h2 class="beat-heading" id="beat1Title">A career that goes <span class="heading-accent">further</span> <span class="heading-arrow">&gt;</span></h2>
+          <h2 class="beat-heading" id="beat1Title">A career that goes <span class="heading-accent">further</span></h2>
           <p class="beat-body">At the Royal Flying Doctor Service, our people are at the heart of everything we do.</p>
           <p class="beat-body">Joining our team means becoming part of one of Australia’s most <strong class="orange-emphasis">trusted</strong> organisations.</p>
         </div>
@@ -3357,7 +3457,7 @@ body.rfds-overlay-open { overflow: hidden; }
       <!-- Beat 2 -->
       <section class="narrative-card" id="narrative2" aria-labelledby="beat2Title">
         <div class="beat-copy">
-          <h2 class="beat-heading" id="beat2Title">Work with purpose <span class="heading-arrow">&gt;</span></h2>
+          <h2 class="beat-heading" id="beat2Title">Work with purpose</h2>
           <p class="beat-body">Across our national network of bases, clinics and offices, we offer an environment to learn, the opportunity to grow and the support to build a <strong class="orange-emphasis">rewarding</strong> career.</p>
         </div>
       </section>
@@ -3365,7 +3465,7 @@ body.rfds-overlay-open { overflow: hidden; }
       <!-- Beat 3 -->
       <section class="narrative-card beat-three" id="narrative3" aria-labelledby="beat3Title">
         <div class="beat-copy">
-          <h2 class="beat-heading" id="beat3Title">Every role matters <span class="heading-arrow">&gt;</span></h2>
+          <h2 class="beat-heading" id="beat3Title">Every role matters</h2>
           <p class="beat-body">Whatever your role, your work will contribute to improving health outcomes for communities in regional, rural and remote Australia – where we help a person <strong class="orange-emphasis">every 2 minutes.</strong></p>
         </div>
       </section>
@@ -3960,29 +4060,30 @@ function smootherstep(min, max, val) {
 
 // MOTION CONSTANTS (Global Scroll Progress Percentages)
 var MOTION = {
-  hero: { start: 0.0, end: 0.15 },
-  beat1: { enter: 0.14, hold: 0.20, exitStart: 0.29, exitEnd: 0.34 },
-  beat2: { enter: 0.32, hold: 0.38, exitStart: 0.48, exitEnd: 0.53 },
-  beat3: { enter: 0.51, hold: 0.57, exitStart: 0.67, exitEnd: 0.72 },
+  hero: { start: 0.0, end: 0.12 },
+  beat1: { enter: 0.11, hold: 0.17, exitStart: 0.27, exitEnd: 0.32 },
+  beat2: { enter: 0.30, hold: 0.36, exitStart: 0.46, exitEnd: 0.51 },
+  beat3: { enter: 0.49, hold: 0.55, exitStart: 0.65, exitEnd: 0.70 },
   stats: {
-    reveal1: { start: 0.16, end: 0.20 },
+    // Staggered reveal: Narrative claim first, proof stat arrives ~0.03 progress later
+    reveal1: { start: 0.15, end: 0.19 },
     reveal2: { start: 0.34, end: 0.38 },
     reveal3: { start: 0.53, end: 0.57 },
-    clear: { start: 0.71, end: 0.75 }
+    clear: { start: 0.67, end: 0.71 }
   },
   closing: {
-    enter: 0.74, hold: 0.78, exitStart: 0.94, exitEnd: 0.98,
-    finalLine1: { start: 0.77, end: 0.81 },
-    finalLine2: { start: 0.83, end: 0.87 },
-    furtherWord: { start: 0.88, end: 0.96 }
+    enter: 0.71, hold: 0.76, exitStart: 0.88, exitEnd: 0.93,
+    finalLine1: { start: 0.73, end: 0.77 },
+    finalLine2: { start: 0.78, end: 0.82 },
+    furtherWord: { start: 0.82, end: 0.89 }
   },
   map: {
-    hero: { start: 0.0, end: 0.15 },
-    destination: { start: 0.86, end: 0.98 }
+    hero: { start: 0.0, end: 0.12 },
+    destination: { start: 0.82, end: 0.94 }
   },
-  flightPaths: { start: 0.38, end: 0.76 },
+  flightPaths: { start: 0.28, end: 0.72 },
   spine: {
-    stops: [0.15, 0.35, 0.54, 0.75, 0.85, 0.95]
+    stops: [0.0, 0.15, 0.34, 0.53, 0.74, 0.92]
   }
 };
 
@@ -3991,28 +4092,22 @@ function applyNarrativeBeat(node, p, config) {
   var enterP = smoothstep(config.enter, config.hold, p);
   var exitP = smoothstep(config.exitStart, config.exitEnd, p);
   
-  // Enter phase: opacity 0->1, Y 24->0, blur 8->0
-  // Exit phase: opacity 1->0, Y 0->-24, blur 0->8
+  // Kinetic subtle vertical drift during hold so every millimeter of scroll has visual feedback
+  var holdP = clamp((p - config.hold) / Math.max(0.001, config.exitStart - config.hold), 0, 1);
+  var driftY = (holdP - 0.5) * 6;
   
   var opacity = enterP - exitP;
-  var y = (1 - enterP) * 24 - (exitP * 24);
-  var blur = (1 - enterP) * 8 + (exitP * 8);
-  var scale = 1.02 - (enterP * 0.02) - (exitP * 0.02);
+  var y = (1 - enterP) * 20 - (exitP * 20) + (enterP > 0.01 && exitP < 0.99 ? driftY : 0);
+  var scale = 1.015 - (enterP * 0.015) - (exitP * 0.015);
   
   if (opacity <= 0.001) {
     node.style.opacity = '0';
-    node.style.transform = 'translateY(24px) scale(1.02)';
-    node.style.filter = 'blur(8px)';
+    node.style.transform = 'translate3d(0, 20px, 0) scale(1.015)';
     node.style.pointerEvents = 'none';
   } else {
     node.style.opacity = opacity.toFixed(3);
     node.style.transform = 'translate3d(0, ' + y.toFixed(1) + 'px, 0) scale(' + scale.toFixed(3) + ')';
-    if (blur > 0.1) {
-      node.style.filter = 'blur(' + blur.toFixed(1) + 'px)';
-    } else {
-      node.style.filter = 'none';
-    }
-    node.style.pointerEvents = opacity > 0.9 ? 'auto' : 'none';
+    node.style.pointerEvents = opacity > 0.85 ? 'auto' : 'none';
   }
 }
 
@@ -4022,19 +4117,16 @@ function applyStatCard(card, p, enterConfig, exitConfig) {
   var exitP = smoothstep(exitConfig.start, exitConfig.end, p);
   
   var opacity = enterP - exitP;
-  var y = (1 - enterP) * 16 + (exitP * 16);
-  var blur = (1 - enterP) * 5 + (exitP * 5);
-  var scale = 1.03 - (enterP * 0.03) - (exitP * 0.02);
+  var y = (1 - enterP) * 14 + (exitP * 14);
+  var scale = 1.02 - (enterP * 0.02) - (exitP * 0.015);
   
   if (opacity <= 0.001) {
     card.style.opacity = '0';
-    card.style.transform = 'translateY(16px) scale(1.03)';
-    card.style.filter = 'blur(5px)';
+    card.style.transform = 'translate3d(0, 14px, 0) scale(1.02)';
     card.style.pointerEvents = 'none';
   } else {
     card.style.opacity = opacity.toFixed(3);
     card.style.transform = 'translate3d(0, ' + y.toFixed(1) + 'px, 0) scale(' + scale.toFixed(3) + ')';
-    card.style.filter = blur > 0.1 ? 'blur(' + blur.toFixed(1) + 'px)' : 'none';
     card.style.pointerEvents = 'auto';
   }
 }
@@ -4045,11 +4137,11 @@ function applyClosingLine(node, p, config) {
   var exitP = smoothstep(MOTION.closing.exitStart, MOTION.closing.exitEnd, p);
   
   var opacity = enterP - exitP;
-  var y = (1 - enterP) * 16 - (exitP * 16);
+  var y = (1 - enterP) * 14 - (exitP * 14);
   
   if (opacity <= 0.001) {
     node.style.opacity = '0';
-    node.style.transform = 'translateY(16px)';
+    node.style.transform = 'translate3d(0, 14px, 0)';
   } else {
     node.style.opacity = opacity.toFixed(3);
     node.style.transform = 'translate3d(0, ' + y.toFixed(1) + 'px, 0)';
@@ -4074,9 +4166,8 @@ function onScroll() {
   if (heroP < 1) {
     var heroEase = smoothstep(0, 1, heroP);
     heroLockup.style.opacity = (1 - heroEase).toFixed(3);
-    heroLockup.style.transform = 'translate3d(0, ' + (-heroEase * 50).toFixed(1) + 'px, 0) scale(' + (1 - heroEase * 0.02).toFixed(3) + ')';
-    heroLockup.style.filter = 'blur(' + (heroEase * 4).toFixed(1) + 'px)';
-    heroLockup.style.pointerEvents = heroP < 0.2 ? 'auto' : 'none';
+    heroLockup.style.transform = 'translate3d(0, ' + (-heroEase * 38).toFixed(1) + 'px, 0) scale(' + (1 - heroEase * 0.015).toFixed(3) + ')';
+    heroLockup.style.pointerEvents = heroP < 0.25 ? 'auto' : 'none';
   } else {
     heroLockup.style.opacity = '0';
     heroLockup.style.pointerEvents = 'none';
@@ -4122,7 +4213,7 @@ function onScroll() {
     }
   });
 
-  // MAP TRANSFORMATION
+  // MAP CAMERA (Static & Smooth Composition)
   // Stage 1: Hero -> Narrative
   var mapHeroP = smoothstep(MOTION.map.hero.start, MOTION.map.hero.end, progress);
   // Stage 2: Narrative -> Destination
@@ -4138,18 +4229,28 @@ function onScroll() {
   
   var storyMapOpacity = isMobile ? 0.11 : 0.16;
   var currentOpacity = lerp(1.0, storyMapOpacity, mapHeroP) + lerp(0, (1 - storyMapOpacity), mapDestP);
-  
   var currentSaturation = lerp(1.0, 0.78, mapHeroP) + lerp(0, 0.22, mapDestP);
 
   mapStageWrapper.style.opacity = currentOpacity.toFixed(3);
   mapStageWrapper.style.filter = 'saturate(' + currentSaturation.toFixed(3) + ')';
   mapStageWrapper.style.transform = 'translate3d(0,' + currentY.toFixed(2) + 'vh,0) scale(' + currentScale.toFixed(3) + ')';
 
+  // Dynamic Base Beacons Highlighting per Beat
+  var beat1Active = progress >= MOTION.beat1.enter && progress <= MOTION.beat1.exitEnd;
+  var beat2Active = progress >= MOTION.beat2.enter && progress <= MOTION.beat2.exitEnd;
+  var beat3Active = progress >= MOTION.beat3.enter && progress <= MOTION.beat3.exitEnd;
+  var aspBase = document.querySelector('.network-base[data-code="ASP"]');
+  var bmeBase = document.querySelector('.network-base[data-code="BME"]');
+  var cnsBase = document.querySelector('.network-base[data-code="CNS"]');
+  if (aspBase) aspBase.classList.toggle('base-highlight', beat1Active || beat3Active);
+  if (bmeBase) bmeBase.classList.toggle('base-highlight', beat2Active);
+  if (cnsBase) cnsBase.classList.toggle('base-highlight', beat3Active);
+
   // DESTINATION INTERACTIVE ELEMENTS
-  if (progress >= 0.95) {
+  if (progress >= 0.91) {
     finalBanner.classList.add('visible');
     if (sectionStructureNote) sectionStructureNote.classList.add('visible');
-    if (progress >= 0.98) {
+    if (progress >= 0.94) {
       statesLayer.classList.add('map-interactive');
     }
   } else {
@@ -4180,12 +4281,62 @@ function onScroll() {
   spinePipsList.forEach(function(el, idx) {
     if (!el) return;
     if (idx === activePipIndex) {
-      el.style.height = '34px';
+      el.classList.add('active');
+      el.style.height = '32px';
       el.style.background = 'var(--rfds-red)';
     } else {
+      el.classList.remove('active');
       el.style.height = '14px';
-      el.style.background = 'var(--ink-faint)';
+      el.style.background = 'rgba(0, 32, 91, 0.18)';
     }
+  });
+}
+
+// Fast Navigation & Spine Pip Interactivity
+var spineTargetProgress = [0.0, 0.17, 0.36, 0.55, 0.76, 0.95];
+var spinePipsList = [
+  document.getElementById('spine0'),
+  document.getElementById('spine1'),
+  document.getElementById('spine2'),
+  document.getElementById('spine3'),
+  document.getElementById('spine4'),
+  document.getElementById('spine5')
+];
+
+spinePipsList.forEach(function(el, idx) {
+  if (!el) return;
+  el.addEventListener('click', function(e) {
+    e.stopPropagation();
+    var trackHeight = scrollTrack.offsetHeight - window.innerHeight;
+    if (trackHeight <= 0) return;
+    window.scrollTo({ top: trackHeight * spineTargetProgress[idx], behavior: 'smooth' });
+  });
+  el.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      var trackHeight = scrollTrack.offsetHeight - window.innerHeight;
+      if (trackHeight <= 0) return;
+      window.scrollTo({ top: trackHeight * spineTargetProgress[idx], behavior: 'smooth' });
+    }
+  });
+});
+
+var skipToMapBtn = document.getElementById('skipToMapBtn');
+if (skipToMapBtn) {
+  skipToMapBtn.addEventListener('click', function(e) {
+    e.preventDefault();
+    var trackHeight = scrollTrack.offsetHeight - window.innerHeight;
+    if (trackHeight <= 0) return;
+    window.scrollTo({ top: trackHeight * 0.95, behavior: 'smooth' });
+  });
+}
+
+if (scrollPrompt) {
+  scrollPrompt.addEventListener('click', function(e) {
+    e.preventDefault();
+    var trackHeight = scrollTrack.offsetHeight - window.innerHeight;
+    if (trackHeight <= 0) return;
+    window.scrollTo({ top: trackHeight * 0.17, behavior: 'smooth' });
   });
 }
 
@@ -4235,6 +4386,20 @@ function openModal(id) {
   currentActiveStateId = id;
   eoiSelectedSection.value = data.name;
   formSectionLabel.textContent = 'RFDS · ' + data.formTitle;
+
+  // Clear previous selections and mark current state as selected
+  document.querySelectorAll('.state-path').forEach(function(el) {
+    el.classList.remove('state-selected');
+  });
+  if (id === 'SA_NT') {
+    var saEl = document.getElementById('state-SA');
+    var ntEl = document.getElementById('state-NT');
+    if (saEl) saEl.classList.add('state-selected');
+    if (ntEl) ntEl.classList.add('state-selected');
+  } else {
+    var stEl = document.getElementById('state-' + id);
+    if (stEl) stEl.classList.add('state-selected');
+  }
 
   // Every Section click opens directly on the actual EOI form.
   flipCard.classList.remove('flipped');
@@ -4348,6 +4513,11 @@ function closeModal() {
   stateModal.classList.remove('open');
   document.getElementById('rfds-app').classList.remove('drawer-open');
   if (!liveMapOverlay || !liveMapOverlay.classList.contains('open')) document.body.classList.remove('rfds-overlay-open');
+  
+  // Clear selected state outlines smoothly
+  document.querySelectorAll('.state-path').forEach(function(el) {
+    el.classList.remove('state-selected');
+  });
 }
 
 modalCloseBtnFront.addEventListener('click', closeModal);
