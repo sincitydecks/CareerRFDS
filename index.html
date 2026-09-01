@@ -2974,6 +2974,30 @@ body.rfds-overlay-open { overflow: hidden; }
   transition: opacity 0.4s ease, transform 0.4s ease !important;
 }
 
+
+/* EDITORIAL READING MEASURE OVERRIDES */
+#rfds-app .beat-copy {
+  width: min(calc(100vw - 80px), 620px) !important;
+  max-width: 620px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+#rfds-app .hero-lockup {
+  max-width: 620px !important;
+}
+
+@media (max-width: 900px) {
+  #rfds-app .beat-copy {
+    width: min(calc(100vw - 56px), 620px) !important;
+  }
+  
+  #rfds-app .hero-lockup {
+    padding-left: max(28px, calc(var(--safe-left) + 24px)) !important;
+    padding-right: max(28px, calc(var(--safe-right) + 24px)) !important;
+  }
+}
+
 </style>
 
 </head>
