@@ -18,6 +18,10 @@ app.use((req, res) => {
   res.sendFile(path.join(process.cwd(), 'index.html'));
 });
 
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`Server running on port ${PORT}`);
-});
+if (process.env.NODE_ENV !== 'production' || process.env.AI_STUDIO === 'true') {
+  app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+}
+
+export default app;
