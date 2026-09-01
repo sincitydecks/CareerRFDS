@@ -528,7 +528,7 @@ body.rfds-overlay-open { overflow: hidden; }
 /* Final Stage Header Banner (Where could you make a difference) */
 #rfds-app .final-header-banner {
   position: absolute;
-  top: 7vh;
+  top: 2vh;
   left: 0;
   width: 100%;
   text-align: center;
@@ -3741,14 +3741,14 @@ function openLiveMap() {
   liveMapOverlay.classList.add('open');
   liveMapOverlay.setAttribute('aria-hidden', 'false');
   document.body.classList.add('rfds-overlay-open');
-  if (activeFlights.length) renderLiveMapOverlay();
-  else showCustomLiveMap();
+  
+  // Vercel Serverless Functions (datacenter IPs) are blocked by FlightAware's anti-bot protection.
+  // Instead of attempting the failing /api/flights proxy, we instantly render the live iframe feed.
+  showFlightAwareFallback();
+  
   if (liveMapDetails) {
-    liveMapDetails.innerHTML = activeFlights.length
-      ? '<p class="live-map-empty">Select a live aircraft to view its current route and flight information.</p>'
-      : '<p class="live-map-empty">Checking FlightAware for currently airborne RFDS PC-12 and PC-24 aircraft…</p>';
+    liveMapDetails.innerHTML = '<p class="live-map-empty" style="text-align:center; padding-top:12px;"><strong>RFDS Official Flight Map</strong><br>Displaying the live flight feed.</p>';
   }
-  fetchFlights();
 }
 function closeLiveMap() {
   if (!liveMapOverlay) return;
@@ -4132,12 +4132,12 @@ function onScroll() {
   // Stage 2: Narrative -> Destination
   var mapDestP = smoothstep(MOTION.map.destination.start, MOTION.map.destination.end, progress);
   
-  var baseScale = isShortLandscape ? 0.64 : (isCompactPortrait ? 0.64 : (isMobile ? 0.72 : 0.76));
-  var destScale = isShortLandscape ? 0.82 : (isMobile ? 0.90 : 1.02);
+  var baseScale = isShortLandscape ? 0.64 : (isCompactPortrait ? 0.64 : (isMobile ? 0.72 : 0.88));
+  var destScale = isShortLandscape ? 0.82 : (isMobile ? 0.90 : 1.18);
   var currentScale = lerp(baseScale, destScale, mapDestP);
   
-  var baseY = isShortLandscape ? 16 : (isCompactPortrait ? 20 : (isMobile ? 16 : 10));
-  var destY = isShortLandscape ? 12 : (isMobile ? 4 : 0);
+  var baseY = isShortLandscape ? 16 : (isCompactPortrait ? 20 : (isMobile ? 16 : -4));
+  var destY = isShortLandscape ? 12 : (isMobile ? 4 : -7);
   var currentY = lerp(baseY, destY, mapDestP);
   
   var storyMapOpacity = isMobile ? 0.11 : 0.16;
