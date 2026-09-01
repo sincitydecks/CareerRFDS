@@ -1,0 +1,6 @@
+{
+  "name": "RFDS Recruitment Experience",
+  "description": "Royal Flying Doctor Service national recruitment and interactive live flight experience.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
