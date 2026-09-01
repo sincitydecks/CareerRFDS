@@ -2952,6 +2952,28 @@ body.rfds-overlay-open { overflow: hidden; }
   #rfds-app .scroll-track { height: 1080vh; }
 }
 
+
+/* CONTINUOUS SCROLL PHYSICS OVERRIDES */
+#rfds-app .flight-arc { transition: none !important; }
+#rfds-app .narrative-card,
+#rfds-app .hero-lockup,
+#rfds-app .map-stage-wrapper,
+#rfds-app .story-stat-card,
+#rfds-app .beat-final-first,
+#rfds-app .beat-final-second,
+#rfds-app .spine-pip {
+  transition: none !important;
+}
+
+#rfds-app .story-stat-deck {
+  transition: none !important;
+}
+
+#rfds-app .final-header-banner,
+#rfds-app .section-structure-note {
+  transition: opacity 0.4s ease, transform 0.4s ease !important;
+}
+
 </style>
 
 </head>
@@ -3890,177 +3912,261 @@ var beatFinalFirst = document.querySelector('.beat-final-first');
 var beatFinalSecond = document.querySelector('.beat-final-second');
 var furtherWord = document.querySelector('.further-word');
 
-function setStoryStats(count) {
-  if (storyStatDeck) storyStatDeck.setAttribute('aria-hidden', count > 0 ? 'false' : 'true');
-  storyStats.forEach(function(card, idx) {
-    if (!card) return;
-    if (idx < count) card.classList.add('is-visible');
-    else card.classList.remove('is-visible');
-  });
+
+
+
+
+
+
+
+// --- MOTION ENGINE ---
+function clamp(val, min, max) {
+  return Math.min(Math.max(val, min), max);
+}
+function inverseLerp(min, max, val) {
+  return clamp((val - min) / (max - min), 0, 1);
+}
+function lerp(start, end, amt) {
+  return start + (end - start) * amt;
+}
+function smoothstep(min, max, val) {
+  var x = inverseLerp(min, max, val);
+  return x * x * (3 - 2 * x);
+}
+function smootherstep(min, max, val) {
+  var x = inverseLerp(min, max, val);
+  return x * x * x * (x * (x * 6 - 15) + 10);
 }
 
-var spinePips = [
-  document.getElementById('spine0'),
-  document.getElementById('spine1'),
-  document.getElementById('spine2'),
-  document.getElementById('spine3'),
-  document.getElementById('spine4'),
-  document.getElementById('spine5'),
-  document.getElementById('spine6')
-];
+// MOTION CONSTANTS (Global Scroll Progress Percentages)
+var MOTION = {
+  hero: { start: 0.0, end: 0.15 },
+  beat1: { enter: 0.14, hold: 0.19, exitStart: 0.29, exitEnd: 0.35 },
+  beat2: { enter: 0.28, hold: 0.34, exitStart: 0.44, exitEnd: 0.50 },
+  beat3: { enter: 0.44, hold: 0.50, exitStart: 0.61, exitEnd: 0.67 },
+  stats: {
+    reveal1: { start: 0.16, end: 0.20 },
+    reveal2: { start: 0.30, end: 0.34 },
+    reveal3: { start: 0.35, end: 0.39 },
+    clear: { start: 0.64, end: 0.68 }
+  },
+  closing: {
+    enter: 0.68, hold: 0.72, exitStart: 0.94, exitEnd: 0.98,
+    finalLine1: { start: 0.71, end: 0.75 },
+    finalLine2: { start: 0.79, end: 0.83 },
+    furtherWord: { start: 0.88, end: 0.96 }
+  },
+  map: {
+    hero: { start: 0.0, end: 0.15 },
+    destination: { start: 0.86, end: 0.98 }
+  },
+  flightPaths: { start: 0.35, end: 0.70 },
+  spine: {
+    stops: [0.15, 0.30, 0.48, 0.68, 0.82, 0.94]
+  }
+};
 
-function setSpine(activeIdx) {
-  spinePips.forEach(function(el, idx) {
-    if (!el) return;
-    if (idx === activeIdx) el.classList.add('active');
-    else el.classList.remove('active');
-  });
+function applyNarrativeBeat(node, p, config) {
+  if (!node) return;
+  var enterP = smoothstep(config.enter, config.hold, p);
+  var exitP = smoothstep(config.exitStart, config.exitEnd, p);
+  
+  // Enter phase: opacity 0->1, Y 24->0, blur 8->0
+  // Exit phase: opacity 1->0, Y 0->-24, blur 0->8
+  
+  var opacity = enterP - exitP;
+  var y = (1 - enterP) * 24 - (exitP * 24);
+  var blur = (1 - enterP) * 8 + (exitP * 8);
+  var scale = 1.02 - (enterP * 0.02) - (exitP * 0.02);
+  
+  if (opacity <= 0.001) {
+    node.style.opacity = '0';
+    node.style.transform = 'translateY(24px) scale(1.02)';
+    node.style.filter = 'blur(8px)';
+    node.style.pointerEvents = 'none';
+  } else {
+    node.style.opacity = opacity.toFixed(3);
+    node.style.transform = 'translate3d(0, ' + y.toFixed(1) + 'px, 0) scale(' + scale.toFixed(3) + ')';
+    if (blur > 0.1) {
+      node.style.filter = 'blur(' + blur.toFixed(1) + 'px)';
+    } else {
+      node.style.filter = 'none';
+    }
+    node.style.pointerEvents = opacity > 0.9 ? 'auto' : 'none';
+  }
+}
+
+function applyStatCard(card, p, enterConfig, exitConfig) {
+  if (!card) return;
+  var enterP = smoothstep(enterConfig.start, enterConfig.end, p);
+  var exitP = smoothstep(exitConfig.start, exitConfig.end, p);
+  
+  var opacity = enterP - exitP;
+  var y = (1 - enterP) * 16 + (exitP * 16);
+  var blur = (1 - enterP) * 5 + (exitP * 5);
+  var scale = 1.03 - (enterP * 0.03) - (exitP * 0.02);
+  
+  if (opacity <= 0.001) {
+    card.style.opacity = '0';
+    card.style.transform = 'translateY(16px) scale(1.03)';
+    card.style.filter = 'blur(5px)';
+    card.style.pointerEvents = 'none';
+  } else {
+    card.style.opacity = opacity.toFixed(3);
+    card.style.transform = 'translate3d(0, ' + y.toFixed(1) + 'px, 0) scale(' + scale.toFixed(3) + ')';
+    card.style.filter = blur > 0.1 ? 'blur(' + blur.toFixed(1) + 'px)' : 'none';
+    card.style.pointerEvents = 'auto';
+  }
+}
+
+function applyClosingLine(node, p, config) {
+  if (!node) return;
+  var enterP = smoothstep(config.start, config.end, p);
+  var exitP = smoothstep(MOTION.closing.exitStart, MOTION.closing.exitEnd, p);
+  
+  var opacity = enterP - exitP;
+  var y = (1 - enterP) * 16 - (exitP * 16);
+  
+  if (opacity <= 0.001) {
+    node.style.opacity = '0';
+    node.style.transform = 'translateY(16px)';
+  } else {
+    node.style.opacity = opacity.toFixed(3);
+    node.style.transform = 'translate3d(0, ' + y.toFixed(1) + 'px, 0)';
+  }
 }
 
 function onScroll() {
   var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
   var trackHeight = scrollTrack.offsetHeight - window.innerHeight;
   if (trackHeight <= 0) return;
-  var progress = Math.min(Math.max(scrollTop / trackHeight, 0), 1);
+  var progress = clamp(scrollTop / trackHeight, 0, 1);
   var isMobile = window.innerWidth <= 900;
   var isShortLandscape = isMobile && window.innerWidth > window.innerHeight && window.innerHeight <= 520;
   var isCompactPortrait = isMobile && window.innerWidth <= 560 && window.innerHeight <= 650 && window.innerHeight >= window.innerWidth;
-
-  // Stage 0: Hero Lockup
-  if (progress < 0.14) {
-    heroLockup.style.opacity = (1 - (progress / 0.12)).toString();
-    heroLockup.style.transform = 'translateY(' + (-progress * 50) + 'px)';
-    heroLockup.style.pointerEvents = progress < 0.08 ? 'auto' : 'none';
-  } else {
-    heroLockup.style.opacity = '0';
-    heroLockup.style.pointerEvents = 'none';
-  }
-
-  function scrubBeat(node, p, start, end) {
-    if (p < start) {
-      node.classList.remove('active', 'exit');
-    } else if (p >= end) {
-      node.classList.remove('active');
-      node.classList.add('exit');
-    } else {
-      node.classList.add('active');
-      node.classList.remove('exit');
-    }
-  }
-
-  // Deliberate, even story pacing. Each beat gets its own runway; the closing
-  // sequence is a separate centred beat so nothing bunches up at the end.
-  var beat1Start = 0.12;
-  var beat1End = 0.30;
-  var beat2Start = 0.30;
-  var beat2End = 0.48;
-  var beat3Start = 0.48;
-  var beat3End = 0.675;
-  var closingStart = 0.705;
-  var makeDifferenceStart = 0.725;
-  var goFurtherStart = 0.815;
-  var furtherCueStart = 0.915;
-  var closingTextEnd = 0.970;
-  var finalMapStart = 0.992;
-
-  scrubBeat(n1, progress, beat1Start, beat1End);
-  scrubBeat(n2, progress, beat2Start, beat2End);
-  scrubBeat(n3, progress, beat3Start, beat3End);
-  scrubBeat(closingCard, progress, closingStart, closingTextEnd);
-
-  // Proof points resolve with the story: Workforce during Beat 1; the two network
-  // cards during Beat 2; all three remain through Beat 3, then clear before closing.
-  var stat1Start = 0.165;
-  var stat2Start = 0.335;
-  var stat3Start = 0.385;
-  var statsClearStart = 0.645;
-
-  var visibleStatCount = 0;
-  if (progress >= stat1Start && progress < statsClearStart) visibleStatCount = 1;
-  if (progress >= stat2Start && progress < statsClearStart) visibleStatCount = 2;
-  if (progress >= stat3Start && progress < statsClearStart) visibleStatCount = 3;
-  setStoryStats(visibleStatCount);
-  if (storyStatDeck) {
-    storyStatDeck.classList.toggle('is-hidden-for-map', progress >= statsClearStart);
-  }
-
-  if (beatFinalFirst) beatFinalFirst.classList.toggle('is-visible', progress >= makeDifferenceStart && progress < closingTextEnd);
-  if (beatFinalSecond) beatFinalSecond.classList.toggle('is-visible', progress >= goFurtherStart && progress < closingTextEnd);
-
-  // The final sentence holds for a long interval; the flight-path cue only starts
-  // late in that hold, avoiding the sense of acceleration into the map.
-  var furtherProgress = Math.min(Math.max((progress - furtherCueStart) / (closingTextEnd - furtherCueStart), 0), 1);
-  var furtherEase = furtherProgress * furtherProgress * (3 - (2 * furtherProgress));
-  if (furtherWord) {
-    furtherWord.style.setProperty('--further-progress', furtherEase.toFixed(3));
-    furtherWord.style.setProperty('--further-trail', (furtherEase * 58).toFixed(1) + 'px');
-  }
-
-  // Preserve the original scrollytelling composition: centred editorial copy with
-  // the Australia map held quietly in the background. The map never competes with
-  // the text, but it remains present throughout the story and closing sequence.
-  if (progress < 0.13) {
-    mapStageWrapper.style.opacity = '1';
-    mapStageWrapper.style.filter = 'none';
-    mapStageWrapper.style.transform = isShortLandscape
-      ? 'translate3d(0,16vh,0) scale(0.64)'
-      : isCompactPortrait
-        ? 'translate3d(0,20vh,0) scale(0.64)'
-        : isMobile
-          ? 'translate3d(0,16vh,0) scale(0.72)'
-          : 'translate3d(0,10vh,0) scale(0.76)';
-  } else if (progress < finalMapStart) {
-    var mapRevealStart = 0.955;
-    var mapReveal = progress >= mapRevealStart
-      ? Math.min(Math.max((progress - mapRevealStart) / (finalMapStart - mapRevealStart), 0), 1)
-      : 0;
-    var storyMapOpacity = isMobile ? 0.11 : 0.16;
-    var currentMapOpacity = storyMapOpacity + ((1 - storyMapOpacity) * mapReveal);
-    mapStageWrapper.style.opacity = currentMapOpacity.toFixed(3);
-    mapStageWrapper.style.filter = 'saturate(' + (0.78 + mapReveal * 0.22).toFixed(3) + ')';
-
-    if (isMobile) {
-      var mobileY = 4 * mapReveal;
-      var mobileScale = 0.86 + (mapReveal * 0.04);
-      mapStageWrapper.style.transform = 'translate3d(0,' + mobileY.toFixed(2) + 'vh,0) scale(' + mobileScale.toFixed(3) + ')';
-    } else {
-      var desktopScale = 0.94 + (mapReveal * 0.08);
-      mapStageWrapper.style.transform = 'translate3d(0,0,0) scale(' + desktopScale.toFixed(3) + ')';
-    }
-  }
 
   // Cinematic scroll prompt hide
   if (progress > 0.03) scrollPrompt.classList.add('hidden');
   else scrollPrompt.classList.remove('hidden');
 
-  // Progressive Flight Path Drawing
-  var pathProgress = Math.min(Math.max((progress - 0.1) / 0.5, 0), 1);
+  // ACT I: Hero Lockup
+  var heroP = inverseLerp(MOTION.hero.start, MOTION.hero.end, progress);
+  if (heroP < 1) {
+    var heroEase = smoothstep(0, 1, heroP);
+    heroLockup.style.opacity = (1 - heroEase).toFixed(3);
+    heroLockup.style.transform = 'translate3d(0, ' + (-heroEase * 50).toFixed(1) + 'px, 0) scale(' + (1 - heroEase * 0.02).toFixed(3) + ')';
+    heroLockup.style.filter = 'blur(' + (heroEase * 4).toFixed(1) + 'px)';
+    heroLockup.style.pointerEvents = heroP < 0.2 ? 'auto' : 'none';
+  } else {
+    heroLockup.style.opacity = '0';
+    heroLockup.style.pointerEvents = 'none';
+  }
+
+  // NARRATIVE BEATS
+  applyNarrativeBeat(n1, progress, MOTION.beat1);
+  applyNarrativeBeat(n2, progress, MOTION.beat2);
+  applyNarrativeBeat(n3, progress, MOTION.beat3);
+  applyNarrativeBeat(closingCard, progress, MOTION.closing);
+
+  // STAT CARDS
+  if (storyStatDeck) {
+    // Reveal individually, clear together
+    applyStatCard(storyStats[0], progress, MOTION.stats.reveal1, MOTION.stats.clear);
+    applyStatCard(storyStats[1], progress, MOTION.stats.reveal2, MOTION.stats.clear);
+    applyStatCard(storyStats[2], progress, MOTION.stats.reveal3, MOTION.stats.clear);
+    
+    // Manage hidden state for map interactions if needed
+    var isCleared = progress >= MOTION.stats.clear.end;
+    if (isCleared !== storyStatDeck.classList.contains('is-hidden-for-map')) {
+      storyStatDeck.classList.toggle('is-hidden-for-map', isCleared);
+    }
+  }
+
+  // CLOSING TEXT
+  applyClosingLine(beatFinalFirst, progress, MOTION.closing.finalLine1);
+  applyClosingLine(beatFinalSecond, progress, MOTION.closing.finalLine2);
+
+  // FURTHER WORD (Trail effect)
+  var furtherP = smoothstep(MOTION.closing.furtherWord.start, MOTION.closing.furtherWord.end, progress);
+  if (furtherWord) {
+    furtherWord.style.setProperty('--further-progress', furtherP.toFixed(3));
+    furtherWord.style.setProperty('--further-trail', (furtherP * 58).toFixed(1) + 'px');
+  }
+
+  // FLIGHT PATHS
+  var pathProgress = smootherstep(MOTION.flightPaths.start, MOTION.flightPaths.end, progress);
   flightArcs.forEach(function(arc) {
     var len = parseFloat(arc.getAttribute('data-len'));
-    arc.style.strokeDashoffset = len * (1 - pathProgress);
+    if (!isNaN(len)) {
+      arc.style.strokeDashoffset = (len * (1 - pathProgress)).toFixed(1);
+    }
   });
 
-  // Final Stage: Interactive State Mode
-  if (progress >= finalMapStart) {
+  // MAP TRANSFORMATION
+  // Stage 1: Hero -> Narrative
+  var mapHeroP = smoothstep(MOTION.map.hero.start, MOTION.map.hero.end, progress);
+  // Stage 2: Narrative -> Destination
+  var mapDestP = smoothstep(MOTION.map.destination.start, MOTION.map.destination.end, progress);
+  
+  var baseScale = isShortLandscape ? 0.64 : (isCompactPortrait ? 0.64 : (isMobile ? 0.72 : 0.76));
+  var destScale = isShortLandscape ? 0.82 : (isMobile ? 0.90 : 1.02);
+  var currentScale = lerp(baseScale, destScale, mapDestP);
+  
+  var baseY = isShortLandscape ? 16 : (isCompactPortrait ? 20 : (isMobile ? 16 : 10));
+  var destY = isShortLandscape ? 12 : (isMobile ? 4 : 0);
+  var currentY = lerp(baseY, destY, mapDestP);
+  
+  var storyMapOpacity = isMobile ? 0.11 : 0.16;
+  var currentOpacity = lerp(1.0, storyMapOpacity, mapHeroP) + lerp(0, (1 - storyMapOpacity), mapDestP);
+  
+  var currentSaturation = lerp(1.0, 0.78, mapHeroP) + lerp(0, 0.22, mapDestP);
+
+  mapStageWrapper.style.opacity = currentOpacity.toFixed(3);
+  mapStageWrapper.style.filter = 'saturate(' + currentSaturation.toFixed(3) + ')';
+  mapStageWrapper.style.transform = 'translate3d(0,' + currentY.toFixed(2) + 'vh,0) scale(' + currentScale.toFixed(3) + ')';
+
+  // DESTINATION INTERACTIVE ELEMENTS
+  if (progress >= 0.95) {
     finalBanner.classList.add('visible');
     if (sectionStructureNote) sectionStructureNote.classList.add('visible');
-    statesLayer.classList.add('map-interactive');
-    mapStageWrapper.style.opacity = '1';
-    mapStageWrapper.style.filter = 'none';
-    mapStageWrapper.style.transform = isShortLandscape ? 'translate3d(0,12vh,0) scale(0.82)' : (isMobile ? 'translate3d(0,4vh,0) scale(0.90)' : 'scale(1.02)');
+    if (progress >= 0.98) {
+      statesLayer.classList.add('map-interactive');
+    }
   } else {
     finalBanner.classList.remove('visible');
     if (sectionStructureNote) sectionStructureNote.classList.remove('visible');
     statesLayer.classList.remove('map-interactive');
   }
 
-  // Update vertical spine
-  if (progress < beat1Start) setSpine(0);
-  else if (progress < beat2Start) setSpine(1);
-  else if (progress < beat3Start) setSpine(2);
-  else if (progress < closingStart) setSpine(3);
-  else if (progress < finalMapStart) setSpine(4);
-  else setSpine(4);
+  // SPINE PIPS (Continuous Interpolation)
+  var stops = MOTION.spine.stops;
+  var spinePipsList = [
+    document.getElementById('spine0'),
+    document.getElementById('spine1'),
+    document.getElementById('spine2'),
+    document.getElementById('spine3'),
+    document.getElementById('spine4'),
+    document.getElementById('spine5')
+  ];
+  
+  var activePipIndex = 0;
+  for (var i = stops.length - 1; i >= 0; i--) {
+    if (progress >= stops[i]) {
+      activePipIndex = i;
+      break;
+    }
+  }
+  
+  spinePipsList.forEach(function(el, idx) {
+    if (!el) return;
+    if (idx === activePipIndex) {
+      el.style.height = '34px';
+      el.style.background = 'var(--rfds-red)';
+    } else {
+      el.style.height = '14px';
+      el.style.background = 'var(--ink-faint)';
+    }
+  });
 }
 
 var scrollFramePending = false;
