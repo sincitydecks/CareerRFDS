@@ -1388,24 +1388,20 @@ body.rfds-overlay-open { overflow: hidden; }
   width: clamp(220px, 18.5vw, 252px);
   min-width: 0;
   min-height: 116px;
-  padding: 16px 18px 17px;
-  border-radius: 18px;
-  border: 1px solid rgba(255,255,255,0.34);
-  background: linear-gradient(180deg, rgba(255,255,255,0.30), rgba(255,255,255,0.14));
-  box-shadow: 0 16px 40px rgba(0, 32, 91, 0.12);
-  backdrop-filter: blur(18px) saturate(150%);
-  -webkit-backdrop-filter: blur(18px) saturate(150%);
+  padding: 24px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 4px 24px -4px rgba(0, 43, 92, 0.08), inset 0 1px 0 rgba(255, 255, 255, 1);
+  color: var(--rfds-navy);
   opacity: 0;
   transform: translateY(18px);
   transition: opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease;
 }
 #rfds-app .story-stat-card::before {
-  content: "";
-  position: absolute;
-  inset: 0 auto 0 0;
-  width: 4px;
-  border-radius: 18px 0 0 18px;
-  background: linear-gradient(180deg, rgba(240, 91, 34, 0.95), rgba(240, 91, 34, 0.35));
+  display: none;
 }
 #rfds-app .story-stat-card.is-visible {
   opacity: 1;
@@ -1417,9 +1413,9 @@ body.rfds-overlay-open { overflow: hidden; }
   font-size: 11px;
   line-height: 1.2;
   font-weight: 900;
-  letter-spacing: 0;
-  text-transform: none;
-  color: var(--rfds-navy);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--rfds-orange);
 }
 #rfds-app .story-stat-card-value {
   display: block;
@@ -1428,8 +1424,8 @@ body.rfds-overlay-open { overflow: hidden; }
   font-size: clamp(28px, 2.2vw, 36px);
   line-height: 0.95;
   font-weight: 900;
-  letter-spacing: -0.04em;
-  color: var(--rfds-red);
+  letter-spacing: -0.02em;
+  color: var(--rfds-navy);
 }
 #rfds-app .story-stat-card-sub {
   display: block;
@@ -1439,7 +1435,7 @@ body.rfds-overlay-open { overflow: hidden; }
   font-size: 12px;
   line-height: 1.35;
   font-weight: 500;
-  color: var(--rfds-navy);
+  color: rgba(0, 43, 92, 0.7);
   white-space: normal;
 }
 #rfds-app .story-stat-card-value.is-small {
@@ -1463,8 +1459,8 @@ body.rfds-overlay-open { overflow: hidden; }
   font-size: clamp(24px, 2vw, 32px);
   line-height: 0.95;
   font-weight: 900;
-  letter-spacing: -0.035em;
-  color: var(--rfds-red);
+  letter-spacing: -0.02em;
+  color: var(--rfds-navy);
 }
 #rfds-app .story-stat-card-split .split-label {
   display: block;
@@ -1475,7 +1471,7 @@ body.rfds-overlay-open { overflow: hidden; }
   font-weight: 500;
   letter-spacing: 0;
   text-transform: none;
-  color: var(--rfds-navy);
+  color: rgba(0, 43, 92, 0.7);
 }
 
 #rfds-app .orange-emphasis {
@@ -3965,28 +3961,28 @@ function smootherstep(min, max, val) {
 // MOTION CONSTANTS (Global Scroll Progress Percentages)
 var MOTION = {
   hero: { start: 0.0, end: 0.15 },
-  beat1: { enter: 0.14, hold: 0.19, exitStart: 0.29, exitEnd: 0.35 },
-  beat2: { enter: 0.28, hold: 0.34, exitStart: 0.44, exitEnd: 0.50 },
-  beat3: { enter: 0.44, hold: 0.50, exitStart: 0.61, exitEnd: 0.67 },
+  beat1: { enter: 0.14, hold: 0.20, exitStart: 0.29, exitEnd: 0.34 },
+  beat2: { enter: 0.32, hold: 0.38, exitStart: 0.48, exitEnd: 0.53 },
+  beat3: { enter: 0.51, hold: 0.57, exitStart: 0.67, exitEnd: 0.72 },
   stats: {
     reveal1: { start: 0.16, end: 0.20 },
-    reveal2: { start: 0.30, end: 0.34 },
-    reveal3: { start: 0.35, end: 0.39 },
-    clear: { start: 0.64, end: 0.68 }
+    reveal2: { start: 0.34, end: 0.38 },
+    reveal3: { start: 0.53, end: 0.57 },
+    clear: { start: 0.71, end: 0.75 }
   },
   closing: {
-    enter: 0.68, hold: 0.72, exitStart: 0.94, exitEnd: 0.98,
-    finalLine1: { start: 0.71, end: 0.75 },
-    finalLine2: { start: 0.79, end: 0.83 },
+    enter: 0.74, hold: 0.78, exitStart: 0.94, exitEnd: 0.98,
+    finalLine1: { start: 0.77, end: 0.81 },
+    finalLine2: { start: 0.83, end: 0.87 },
     furtherWord: { start: 0.88, end: 0.96 }
   },
   map: {
     hero: { start: 0.0, end: 0.15 },
     destination: { start: 0.86, end: 0.98 }
   },
-  flightPaths: { start: 0.35, end: 0.70 },
+  flightPaths: { start: 0.38, end: 0.76 },
   spine: {
-    stops: [0.15, 0.30, 0.48, 0.68, 0.82, 0.94]
+    stops: [0.15, 0.35, 0.54, 0.75, 0.85, 0.95]
   }
 };
 
